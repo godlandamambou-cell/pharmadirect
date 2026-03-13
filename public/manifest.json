@@ -1,0 +1,18 @@
+{
+  "short_name": "PharmaDirect",
+  "name": "PharmaDirect - Livraison Officine",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/822/822143.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#2ecc71",
+  "description": "Système de gestion et de livraison d'ordonnances."
+}
