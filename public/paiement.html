@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement Sécurisé - PharmaDirect</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .payment-box { background: white; padding: 30px; border-radius: 20px; shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .logo { color: #2ecc71; font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .amount { font-size: 32px; font-weight: bold; color: #2c3e50; margin: 20px 0; }
+        .method-card { border: 2px solid #eee; border-radius: 10px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; cursor: pointer; transition: 0.3s; }
+        .method-card:hover { border-color: #2ecc71; background: #f0fff4; }
+        .method-card img { width: 40px; margin-right: 15px; }
+        .btn-pay { width: 100%; background: #2ecc71; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="payment-box">
+    <div class="logo">PharmaDirect Pay</div>
+    <p>Validation de la transaction</p>
+    
+    <div class="amount">15.000 FC</div>
+
+    <div class="method-card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/M-Pesa_logo.png" alt="Mpesa">
+        <span>M-Pesa / Vodacom</span>
+    </div>
+    <div class="method-card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c8/Orange_logo.svg" alt="Orange">
+        <span>Orange Money</span>
+    </div>
+    <div class="method-card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Airtel_logo.svg" alt="Airtel">
+        <span>Airtel Money</span>
+    </div>
+
+    <button class="btn-pay" onclick="initierPaiement()">PAYER MAINTENANT</button>
+    <p style="font-size: 12px; color: #95a5a6; margin-top: 15px;">Transaction sécurisée par cryptage SSL</p>
+</div>
+
+<script>
+    function initierPaiement() {
+        alert("Redirection vers la passerelle de paiement sécurisée...");
+        // Ici on appellera l'API de Flutterwave ou Paystack
+    }
+</script>
+
+</body>
+</html>
