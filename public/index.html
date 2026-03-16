@@ -3,81 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenue sur PharmaDirect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>PharmaDirect - Unique</title>
+    <script src="/socket.io/socket.io.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        
-        .splash-container {
-            height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('https://images.unsplash.com/photo-1576091160550-2173dad99d03?auto=format&fit=crop&q=80');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 25px;
-            color: white;
-            text-align: center;
-        }
-
-        .logo-main { font-size: 42px; font-weight: 800; color: #2ecc71; margin-bottom: 20px; letter-spacing: -1px; }
-
-        .intro-box {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            padding: 30px;
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            max-width: 450px;
-            margin-bottom: 40px;
-        }
-
-        .intro-box p { font-size: 16px; line-height: 1.6; margin-bottom: 15px; }
-        .intro-box .warning { font-weight: 700; color: #ffeb3b; display: block; margin-top: 10px; font-size: 14px; }
-
-        .btn-start {
-            width: 85%;
-            max-width: 350px;
-            padding: 20px;
-            background: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4);
-            position: absolute;
-            bottom: 60px;
-        }
-
-        .btn-start:hover { transform: scale(1.05); background: #27ae60; }
+        :root { --p: #2ecc71; --s: #1e293b; }
+        body { font-family: sans-serif; margin: 0; background: #f4f7f6; }
+        .hidden { display: none !important; }
+        .screen { padding: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; }
+        button { width: 100%; padding: 12px; background: var(--p); border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        #chat { height: 200px; overflow-y: auto; background: #eee; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+        .gain { font-size: 32px; color: var(--p); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="splash-container">
-    <div class="logo-main">PharmaDirect</div>
-    
-    <div class="intro-box">
-        <p>
-            Bienvenue sur <strong>PharmaDirect</strong>, votre lien direct avec la santé. 
-            Nous réinventons l'accès aux soins en combinant la rapidité de la livraison et la rigueur de l'expertise officinale.
-        </p>
-        <p>
-            Ici, vous bénéficiez de l'accompagnement d'un pharmacien qualifié pour chaque traitement.
-        </p>
-        <span class="warning">⚠️ Votre santé est précieuse, ne la confiez pas au hasard.</span>
+    <div id="auth-screen" class="screen">
+        <div class="card">
+            <h2 id="auth-title">Connexion PharmaDirect</h2>
+            <input type="text" id="login" placeholder="Login">
+            <input type="password" id="mdp" placeholder="Mot de passe">
+            <button onclick="seConnecter()">SE CONNECTER</button>
+            <p style="text-align:center" onclick="basculer()">Pas de compte ? S'inscrire</p>
+        </div>
     </div>
 
-    <button class="btn-start" onclick="window.location.href='/client-register.html'">
-        COMMENCER
-    </button>
-</div>
+    <div id="client-screen" class="screen hidden">
+        <div class="card"><h3>Bienvenue <span id="user-nom"></span></h3></div>
+        <div class="card">
+            <h4>Payer Médicament (50.000 FC)</h4>
+            <button onclick="payer(50000)">ACHETER MAINTENANT</button>
+        </div>
+        <div class="card">
+            <h4>Chat avec Pharmacie</h4>
+            <div id="chat-client" style="height:100px; background:#f9f9f9; padding:5px;"></div>
+            <input type="text" id="msg-client" placeholder="Message...">
+            <button onclick="envoyerMsg('pharma_1', 'msg-client')">Envoyer</button>
+        </div>
+    </div>
 
+    <div id="pharma-screen" class="screen hidden">
+        <div class="card"><h3>Tableau de Bord Officine</h3></div>
+        <div id="commandes-pharma"></div>
+    </div>
+
+    <div id="admin-screen" class="screen hidden">
+        <h2 style="color:var(--s)">🛡️ Meta-Control Arland</h2>
+        <div class="card">
+            <p>Mes Commissions (10%)</p>
+            <div id="gain-total" class="gain">0 FC</div>
+        </div>
+        <div class="card" style="background: #000; color: #0f0; font-family: monospace;">
+            <h4>Surveillance des flux</h4>
+            <div id="admin-logs"></div>
+        </div>
+        <audio id="son-cash" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
+    </div>
+
+<script>
+    const socket = io();
+    let currentUser = null;
+
+    async function seConnecter() {
+        const login = document.getElementById('login').value;
+        const mdp = document.getElementById('mdp').value;
+        const res = await fetch('/auth', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ login, mdp, action: 'login' })
+        });
+        const user = await res.json();
+        if(user.id) {
+            currentUser = user;
+            socket.emit('join', user.id);
+            afficherInterface(user.role);
+        } else { alert("Erreur identifiants"); }
+    }
+
+    function afficherInterface(role) {
+        document.getElementById('auth-screen').classList.add('hidden');
+        if(role === 'ADMIN') document.getElementById('admin-screen').classList.remove('hidden');
+        if(role === 'CLIENT') {
+            document.getElementById('client-screen').classList.remove('hidden');
+            document.getElementById('user-nom').innerText = currentUser.nom;
+        }
+        if(role === 'PHARMA') document.getElementById('pharma-screen').classList.remove('hidden');
+    }
+
+    function payer(montant) {
+        socket.emit('paiement-client', { montant, client: currentUser.nom, pharmaId: 'pharma_1', pharmaNom: 'Pharmacie Gombe' });
+        alert("Paiement envoyé !");
+    }
+
+    // --- ECOUTEURS SOCKET ---
+    socket.on('alerte-admin-commission', d => {
+        document.getElementById('son-cash').play();
+        const logs = document.getElementById('admin-logs');
+        logs.innerHTML += `<p>> Commission: +${d.commission} FC (Vente de ${d.montant})</p>`;
+        // Mise à jour solde simplifié
+        let actuel = parseInt(document.getElementById('gain-total').innerText);
+        document.getElementById('gain-total').innerText = (actuel + d.commission) + " FC";
+    });
+
+    socket.on('surveillance-admin', d => {
+        document.getElementById('admin-logs').innerHTML += `<p style="color:#888">> CHAT: ${d.from} dit "${d.msg}"</p>`;
+    });
+</script>
 </body>
 </html>
