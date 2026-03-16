@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - PharmaDirect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #2ecc71; --bg: #f4f7f6; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .reg-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
+        h2 { color: var(--primary); text-align: center; margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; outline: none; }
+        .btn-reg { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="reg-card">
+        <h2>Créer un compte</h2>
+        <form action="/register-client" method="POST">
+            <input type="text" name="nom" placeholder="Nom complet" required>
+            <input type="tel" name="telephone" placeholder="Numéro de téléphone (M-Pesa)" required>
+            <input type="email" name="email" placeholder="Adresse Email" required>
+            <select name="commune" required>
+                <option value="">Sélectionnez votre commune</option>
+                <option>Gombe</option><option>Ngaliema</option><option>Limete</option><option>Kintambo</option>
+            </select>
+            <input type="password" name="password" placeholder="Mot de passe" required>
+            <button type="submit" class="btn-reg">S'INSCRIRE</button>
+        </form>
+    </div>
+</body>
+</html>
