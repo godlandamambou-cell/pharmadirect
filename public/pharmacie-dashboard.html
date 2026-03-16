@@ -2,32 +2,33 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Pharmacie</title>
+    <title>Pharma - PharmaDirect</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #eef2f3; }
-        .alert-box { background: #e74c3c; color: white; padding: 20px; border-radius: 10px; display: none; margin-bottom: 20px; }
+        body { font-family:sans-serif; background:#f4f7f6; padding:30px; }
+        .notif { display:none; background:#e74c3c; color:white; padding:20px; border-radius:15px; animation: blink 1s infinite; }
+        @keyframes blink { 0% {opacity:1;} 50% {opacity:0.5;} 100% {opacity:1;} }
     </style>
 </head>
 <body>
-    <h1>Espace Pharmacien</h1>
-    <div id="notif" class="alert-box">🚨 NOUVELLE COMMANDE REÇUE !</div>
-    <div style="background: white; padding: 20px; border-radius: 10px;">
-        <h3>Commandes en attente</h3>
-        <p>Les nouvelles ordonnances apparaîtront ici avec une alerte sonore.</p>
+    <h1>Tableau de Bord Pharmacie</h1>
+    <div id="alerte" class="notif">🚨 NOUVELLE ORDONNANCE REÇUE !</div>
+    
+    <div style="background:white; padding:20px; border-radius:15px; margin-top:20px;">
+        <h3>Commandes à traiter</h3>
+        <p id="msg">En attente de commandes...</p>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const pharmaId = 101; // ID statique pour le test
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        const sound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
-        socket.emit('join-pharma', pharmaId);
+        socket.emit('join-pharma', 101); // Simulation ID
 
         socket.on('alerte-sonore', (data) => {
-            document.getElementById('notif').style.display = 'block';
-            audio.play().catch(() => console.log("Cliquez sur la page pour activer le son"));
-            alert(data.message);
+            document.getElementById('alerte').style.display = 'block';
+            document.getElementById('msg').innerText = "Commande de : " + data.clientNom;
+            sound.play();
         });
     </script>
 </body>
