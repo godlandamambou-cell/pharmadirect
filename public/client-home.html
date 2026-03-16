@@ -3,132 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PharmaDirect - Client</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>PharmaDirect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
     <style>
-        :root { --primary: #2ecc71; --bg: #f8f9fa; --white: #ffffff; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); padding-bottom: 80px; }
-        
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
-        .tab-content { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+        :root { --primary: #2ecc71; --bg: #f8f9fa; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); padding-bottom: 80px; margin:0; }
+        header { background: var(--primary); color: white; padding: 15px; text-align: center; border-radius: 0 0 20px 20px; }
+        .tab { display:none; padding: 20px; }
+        .active { display:block; }
         .card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        
-        /* CHAT INTERFACE */
-        #chat-window { height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; background: #efe7dd; border-radius: 10px; margin-bottom: 10px; }
-        .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 14px; line-height: 1.4; position: relative; }
-        .msg.sent { align-self: flex-end; background: #dcf8c6; border-bottom-right-radius: 2px; }
-        .msg.received { align-self: flex-start; background: white; border-bottom-left-radius: 2px; }
-        .chat-input-area { display: flex; gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; outline: none; }
-
-        /* NAV BAR */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px; box-shadow: 0 -2px 15px rgba(0,0,0,0.1); border-radius: 20px 20px 0 0; }
-        .nav-item { font-size: 12px; text-align: center; color: #999; cursor: pointer; transition: 0.3s; }
-        .active-nav { color: var(--primary); font-weight: bold; transform: translateY(-5px); }
-        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+        /* CHAT BUBBLES */
+        #chat-win { height: 250px; overflow-y: auto; background: #efe7dd; padding: 10px; border-radius: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 8px 12px; border-radius: 10px; font-size: 13px; max-width: 80%; }
+        .sent { background: #dcf8c6; align-self: flex-end; }
+        .received { background: white; align-self: flex-start; }
+        /* NAV */
+        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); border-radius: 20px 20px 0 0; }
+        .nav-item { color: #999; font-size: 12px; text-align: center; cursor: pointer; }
+        .active-nav { color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<header><h1>PharmaDirect</h1></header>
+<header><h3>PharmaDirect</h3></header>
 
-<section id="accueil" class="tab-content active">
+<div id="home" class="tab active">
+    <div class="card"><h3>Bienvenue 👋</h3><p>Trouvez vos produits à Kinshasa.</p></div>
+</div>
+
+<div id="chat" class="tab">
     <div class="card">
-        <h3>📍 Localisation</h3>
-        <p style="font-size: 14px; color: #666;">Vous commandez actuellement à : <b>Gombe</b></p>
-    </div>
-    <div class="card" style="border-left: 5px solid var(--primary);">
-        <p><b>Statut :</b> Pharmacien en ligne 🟢</p>
-    </div>
-</section>
-
-<section id="produits" class="tab-content">
-    <div id="liste-produits" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-        </div>
-</section>
-
-<section id="panier" class="tab-content">
-    <div class="card" style="text-align: center;">
-        <div style="font-size: 40px; margin-bottom: 10px;">📄</div>
-        <h3>Ma Prescription</h3>
-        <p style="font-size: 13px; color: #888; margin-bottom: 15px;">Capturez votre ordonnance pour recevoir le prix.</p>
-        <button class="card" style="width: 100%; background: var(--primary); color: white; border: none; font-weight: bold; padding: 15px; cursor: pointer;">CAPTURER PHOTO</button>
-    </div>
-</section>
-
-<section id="messages" class="tab-content">
-    <div class="card">
-        <h3 style="margin-bottom: 10px;">Discussion avec Pharmacien</h3>
-        <div id="chat-window">
-            <div class="msg received">Bonjour ! Comment puis-je vous aider avec votre ordonnance ?</div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Écrivez ici...">
-            <button onclick="envoyerMessage()" style="background: var(--primary); border: none; color: white; padding: 10px 15px; border-radius: 50%; cursor: pointer;">➤</button>
+        <h3>Chat Pharmacien</h3>
+        <div id="chat-win"></div>
+        <div style="display:flex; margin-top:10px; gap:5px;">
+            <input id="chat-in" type="text" style="flex:1; padding:10px; border-radius:20px; border:1px solid #ddd;" placeholder="Votre question...">
+            <button onclick="sendMsg()" style="background:var(--primary); color:white; border:none; padding:10px 15px; border-radius:50%;">➤</button>
         </div>
     </div>
-</section>
+</div>
 
-<nav class="nav-bar">
-    <div class="nav-item active-nav" onclick="changeTab('accueil', this)"><span class="nav-icon">🏠</span>Accueil</div>
-    <div class="nav-item" onclick="changeTab('produits', this)"><span class="nav-icon">💊</span>Produits</div>
-    <div class="nav-item" onclick="changeTab('panier', this)"><span class="nav-icon">🛒</span>Panier</div>
-    <div class="nav-item" onclick="changeTab('messages', this)"><span class="nav-icon">💬</span>Chat</div>
+<div id="pay" class="tab">
+    <div class="card" style="text-align:center;">
+        <h3>Paiement Test</h3>
+        <p>Simulation d'achat de 50.000 FC</p>
+        <button onclick="simulerPaye()" style="background:var(--primary); color:white; border:none; padding:15px; width:100%; border-radius:10px; font-weight:bold;">PAYER MAINTENANT</button>
+    </div>
+</div>
+
+<nav>
+    <div class="nav-item active-nav" onclick="showTab('home', this)">🏠<br>Accueil</div>
+    <div class="nav-item" onclick="showTab('chat', this)">💬<br>Chat</div>
+    <div class="nav-item" onclick="showTab('pay', this)">💰<br>Payer</div>
 </nav>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io();
-    const myId = "client_" + Math.floor(Math.random() * 1000); // ID temporaire
-    const pharmaId = "pharma_1"; // ID de la pharmacie cible
-    const myName = "Arland (Client)";
-
+    const myId = "Client_Arland";
     socket.emit('join-room', myId);
 
-    function changeTab(id, el) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    function showTab(id, el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
         document.getElementById(id).classList.add('active');
         el.classList.add('active-nav');
     }
 
-    // GESTION DU CHAT
-    function envoyerMessage() {
-        const input = document.getElementById('chat-input');
-        const msg = input.value;
-        if(!msg) return;
-
-        const data = {
-            from: myId,
-            to: pharmaId,
-            msg: msg,
-            senderName: myName
-        };
-
-        // 1. Envoyer au serveur
+    function sendMsg() {
+        const input = document.getElementById('chat-in');
+        if(!input.value) return;
+        const data = { from: myId, to: 'pharma_1', msg: input.value, senderName: 'Arland' };
         socket.emit('send-message', data);
-
-        // 2. Afficher dans ma fenêtre
-        afficherMessage(msg, 'sent');
+        renderMsg(input.value, 'sent');
         input.value = '';
     }
 
-    socket.on('receive-message', (data) => {
-        afficherMessage(data.msg, 'received');
-    });
+    socket.on('receive-message', d => renderMsg(d.msg, 'received'));
 
-    function afficherMessage(text, type) {
-        const win = document.getElementById('chat-window');
-        const div = document.createElement('div');
-        div.className = `msg ${type}`;
-        div.innerText = text;
-        win.appendChild(div);
+    function renderMsg(txt, type) {
+        const win = document.getElementById('chat-win');
+        win.innerHTML += `<div class="msg ${type}">${txt}</div>`;
         win.scrollTop = win.scrollHeight;
+    }
+
+    function simulerPaye() {
+        socket.emit('valider-paiement', { montant: 50000, clientNom: "Arland", pharmaNom: "Gombe Pharma", pharmaId: "pharma_1" });
+        alert("Paiement envoyé ! Écoutez le son sur l'écran Admin.");
     }
 </script>
 </body>
