@@ -1,140 +1,105 @@
 const express = require('express');
-const crypto = require('crypto');
+const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
+
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: { origin: "*" } // Important pour le déploiement en ligne
+});
 
-// --- CONFIGURATION TECHNIQUE (Cahier des charges Point 3) ---
-app.use(express.static('public')); // Sert le manifest.json et les icônes
+// Render utilise un port dynamique, on doit donc utiliser process.env.PORT
+const port = process.env.PORT || 3000;
+
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// --- SÉCURITÉ & CONFIDENTIALITÉ (Cahier des charges Point 4) ---
-const ADMIN_PASSWORD = "TonMotDePasseSecret123"; // TOI SEUL DOIS LE CONNAÎTRE
-const ENCRYPTION_KEY = crypto.randomBytes(32); 
-const IV = crypto.randomBytes(16);
+// --- DONNÉES ---
+let pharmacies = [{ id: "pharma_1", nom: "Pharmacie de la Gombe", email: "pharma@test.com", password: "123", commune: "Gombe" }];
+let transactions = [];
 
-// Base de données temporaire (Simule PostgreSQL)
-let baseDeDonnees = {
-    commandes: [],
-    stats: { totalVentes: 0, commissions: 0 }
-};
+// --- LOGIQUE SOCKET.IO ---
+io.on('connection', (socket) => {
+    socket.on('join-room', (userId) => socket.join(userId));
 
-// Fonction de chiffrement pour le secret médical
-function chiffrer(donnee) {
-    let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), IV);
-    let encrypted = cipher.update(donnee);
-    return Buffer.concat([encrypted, cipher.final()]).toString('hex');
-}
+    socket.on('send-message', (data) => {
+        io.to(data.to).emit('receive-message', data);
+        io.emit('admin-monitor-chat', { ...data, time: new Date().toLocaleTimeString() });
+    });
 
-// --- PILIER 1 : INTERFACE CLIENT (Web/Mobile Installable) ---
+    socket.on('valider-paiement', (cmd) => {
+        const commission = cmd.montant * 0.10;
+        const totalPharma = cmd.montant * 0.90;
+        const dataFinal = { ...cmd, commission, totalPharma, id: Date.now() };
+        transactions.push(dataFinal);
+        io.emit('admin-new-transaction', dataFinal); 
+    });
+});
+
+// --- ROUTES ---
+
+// Accueil
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'client-home.html'));
+});
+
+// Login
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    if (username === 'admin' && password === 'Arland2026') return res.redirect('/admin-control');
+    const pharma = pharmacies.find(p => p.email === username);
+    if (pharma) return res.redirect(`/pharma-dashboard.html?id=${pharma.id}`);
+    res.redirect('/client-home.html');
+});
+
+// ADMIN CONTROL (Vérifiez bien cette route)
+app.get('/admin-control', (req, res) => {
     res.send(`
         <!DOCTYPE html>
-        <html lang="fr">
+        <html>
         <head>
             <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="manifest" href="/manifest.json">
-            <title>PharmaDirect - Commander</title>
+            <title>Admin - PharmaDirect</title>
             <style>
-                body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
-                .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-                input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
-                button { background: #2ecc71; color: white; border: none; font-weight: bold; cursor: pointer; }
+                body { font-family:sans-serif; background:#0f172a; color:white; padding:20px; }
+                .grid { display:flex; gap:20px; margin-bottom:20px; }
+                .card { background:#1e293b; padding:20px; border-radius:15px; flex:1; border-bottom:5px solid #2ecc71; }
+                #chat-monitor { height:250px; overflow-y:auto; background:#000; padding:10px; border-radius:10px; font-family:monospace; color:#0f0; }
             </style>
         </head>
         <body>
-            <div class="card">
-                <h2 style="color:#2ecc71; text-align:center;">PharmaDirect</h2>
-                <form action="/commander" method="POST">
-                    <label>Nom complet :</label>
-                    <input type="text" name="nom" placeholder="Ex: Arland Landamambou" required>
-                    <label>Ordonnance (Photo) :</label>
-                    <input type="file" name="photo" accept="image/*">
-                    <button type="submit">ENVOYER LA COMMANDE</button>
-                </form>
+            <h1>🛡️ Admin PharmaDirect</h1>
+            <div class="grid">
+                <div class="card">
+                    <h3>Mes Gains (10%)</h3>
+                    <h2 id="solde" style="color:#2ecc71; font-size:40px;">0 FC</h2>
+                </div>
             </div>
+            <div class="card">
+                <h3>💬 Chat en direct</h3>
+                <div id="chat-monitor"></div>
+            </div>
+            <audio id="cash-sound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
+            <script src="/socket.io/socket.io.js"></script>
+            <script>
+                const socket = io();
+                let total = 0;
+                socket.on('admin-new-transaction', d => {
+                    document.getElementById('cash-sound').play().catch(() => {});
+                    total += d.commission;
+                    document.getElementById('solde').innerText = total.toLocaleString() + ' FC';
+                });
+                socket.on('admin-monitor-chat', d => {
+                    document.getElementById('chat-monitor').innerHTML += '<p>[' + d.time + '] ' + d.senderName + ': ' + d.msg + '</p>';
+                });
+            </script>
         </body>
         </html>
     `);
 });
 
-// --- PILIER 2 : INTERFACE PHARMACIE (Validation & Devis) ---
-app.get('/pharmacie', (req, res) => {
-    let enAttente = baseDeDonnees.commandes.filter(c => c.statut === "En attente");
-    res.send(`
-        <div style="font-family:sans-serif; padding:20px;">
-            <h2 style="color:#e67e22;">Portail Pharmacie Partenaire</h2>
-            ${enAttente.map(c => `
-                <div style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-radius:10px;">
-                    <p><b>Client :</b> ${c.client}</p>
-                    <form action="/valider-prix" method="POST">
-                        <input type="hidden" name="id" value="${c.id}">
-                        <input type="number" name="prix" placeholder="Prix en FC" required>
-                        <button style="background:#e67e22; color:white; border:none; padding:8px 15px; border-radius:5px;">Envoyer le prix</button>
-                    </form>
-                </div>
-            `).join('') || "Aucune commande en attente."}
-        </div>
-    `);
+server.listen(port, () => {
+    console.log('Serveur lancé sur le port ' + port);
 });
-
-// --- PILIER 3 : PANNEAU ADMIN (Propriétaire - Arland Uniquement) ---
-app.get('/admin', (req, res) => {
-    if (req.query.password !== ADMIN_PASSWORD) {
-        return res.status(403).send("<h1>Accès Interdit. Seul l'administrateur peut voir cette page.</h1>");
-    }
-
-    res.send(`
-        <div style="font-family:sans-serif; padding:30px; background:#2c3e50; color:white; min-height:100vh;">
-            <h1>Panneau Maître PharmaDirect</h1>
-            <div style="display:flex; gap:20px; margin-bottom:30px;">
-                <div style="background:#27ae60; padding:20px; border-radius:10px; flex:1;">
-                    <h3>Mes Commissions (10%)</h3>
-                    <p style="font-size:2em;">${baseDeDonnees.stats.commissions} FC</p>
-                </div>
-                <div style="background:#2980b9; padding:20px; border-radius:10px; flex:1;">
-                    <h3>Volume Total Ventes</h3>
-                    <p style="font-size:2em;">${baseDeDonnees.stats.totalVentes} FC</p>
-                </div>
-            </div>
-            <table border="1" style="width:100%; border-collapse:collapse; background:rgba(255,255,255,0.1);">
-                <tr><th>ID</th><th>Client</th><th>Prix</th><th>Commission</th><th>Statut</th></tr>
-                ${baseDeDonnees.commandes.map(c => `
-                    <tr>
-                        <td>${c.id}</td>
-                        <td>${c.client}</td>
-                        <td>${c.prix} FC</td>
-                        <td style="color:#2ecc71;">${c.prix * 0.10} FC</td>
-                        <td>${c.statut}</td>
-                    </tr>
-                `).join('')}
-            </table>
-        </div>
-    `);
-});
-
-// --- ROUTES LOGIQUES (Workflow du Cahier des charges Point 5) ---
-app.post('/commander', (req, res) => {
-    const nouvelleCmd = {
-        id: Date.now().toString().slice(-4),
-        client: req.body.nom,
-        statut: "En attente",
-        prix: 0
-    };
-    baseDeDonnees.commandes.push(nouvelleCmd);
-    res.send("<h2>Commande envoyée avec succès à la pharmacie !</h2><a href='/'>Retour</a>");
-});
-
-app.post('/valider-prix', (req, res) => {
-    const { id, prix } = req.body;
-    let cmd = baseDeDonnees.commandes.find(c => c.id === id);
-    if (cmd) {
-        let montant = parseInt(prix);
-        cmd.prix = montant;
-        cmd.statut = "Prix validé";
-        baseDeDonnees.stats.totalVentes += montant;
-        baseDeDonnees.stats.commissions += (montant * 0.10);
-    }
-    res.redirect('/pharmacie');
-});
-
-app.listen(3000, () => console.log("🚀 Application PharmaDirect active sur http://localhost:3000"));
