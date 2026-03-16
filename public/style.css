@@ -1,25 +1,17 @@
-<div class="engagement-container" style="padding: 25px; text-align: center; background: #fff; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin: 20px;">
-    <h2 style="color: #2ecc71; font-size: 20px; margin-bottom: 15px;">L'expertise officinale à votre porte</h2>
+<div class="splash-screen" style="height: 100vh; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1576091160550-2173dad99d03?auto=format&fit=crop&q=80'); background-size: cover; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px;">
     
-    <p style="font-size: 15px; line-height: 1.6; color: #555; margin-bottom: 20px;">
-        Votre pharmacien vous conseille, nos équipes vous accompagnent. 
-        <br><br>
-        <span style="font-weight: bold; color: #e74c3c;">⚠️ Rappel de sécurité :</span> 
-        Le médicament n'est pas un produit ordinaire. Pour votre protection, chaque commande est supervisée par un professionnel de santé qualifié.
-    </p>
-
-    <div style="display: flex; justify-content: center; gap: 15px;">
-        <div style="text-align: center;">
-            <div style="background: #f0fff4; padding: 10px; border-radius: 50%; width: 40px; height: 40px; margin: 0 auto 5px;">🛡️</div>
-            <span style="font-size: 11px;">Sécurité</span>
-        </div>
-        <div style="text-align: center;">
-            <div style="background: #f0fff4; padding: 10px; border-radius: 50%; width: 40px; height: 40px; margin: 0 auto 5px;">👨‍⚕️</div>
-            <span style="font-size: 11px;">Conseil</span>
-        </div>
-        <div style="text-align: center;">
-            <div style="background: #f0fff4; padding: 10px; border-radius: 50%; width: 40px; height: 40px; margin: 0 auto 5px;">🏠</div>
-            <span style="font-size: 11px;">Livraison</span>
-        </div>
+    <h1 style="font-size: 3.5rem; margin-bottom: 10px;">PharmaDirect</h1>
+    
+    <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); max-width: 400px;">
+        <p style="font-size: 1.1rem; line-height: 1.6;">
+            Bienvenue sur <strong>PharmaDirect</strong>, votre lien direct avec la santé. 
+            Nous combinons la rapidité de la livraison et la rigueur de l'expertise officinale. 
+            <br><br>
+            <span style="font-style: italic;">Votre santé est précieuse, faites-vous accompagner par un professionnel.</span>
+        </p>
     </div>
+
+    <button onclick="window.location.href='/inscription'" style="position: absolute; bottom: 50px; width: 85%; padding: 20px; background: #2ecc71; color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+        COMMENCER
+    </button>
 </div>
