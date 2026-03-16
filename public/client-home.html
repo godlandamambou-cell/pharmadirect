@@ -3,49 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PharmaDirect - Client</title>
+    <title>PharmaDirect - Mon Espace</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #2ecc71; --bg: #f8f9fa; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); padding-bottom: 70px; }
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; }
-        .content { padding: 20px; display: none; }
-        .active { display: block; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; }
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
-        .nav-item { font-size: 12px; text-align: center; color: #999; cursor: pointer; }
-        .nav-item.active-nav { color: var(--primary); font-weight: bold; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+        body { background: var(--bg); padding-bottom: 80px; }
+        header { background: var(--primary); color:white; padding:20px; text-align:center; border-radius:0 0 20px 20px; position:sticky; top:0; z-index:100; }
+        .tab-content { display:none; padding:20px; }
+        .active { display:block; }
+        .card { background:white; padding:15px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05); margin-bottom:15px; }
+        .grid-products { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+        .nav-bar { position:fixed; bottom:0; width:100%; background:white; display:flex; justify-content:space-around; padding:12px; box-shadow:0 -2px 10px rgba(0,0,0,0.1); border-radius:20px 20px 0 0; }
+        .nav-item { font-size:12px; text-align:center; color:#999; cursor:pointer; }
+        .active-nav { color:var(--primary); font-weight:bold; }
+        .btn-main { background:var(--primary); color:white; border:none; padding:15px; border-radius:12px; width:100%; font-weight:bold; cursor:pointer; }
+        .filter-btn { padding:8px 15px; border-radius:20px; border:1px solid #ddd; background:white; white-space:nowrap; cursor:pointer; }
     </style>
 </head>
 <body>
 
 <header><h1>PharmaDirect</h1></header>
 
-<div id="accueil" class="content active">
-    <h2>Bienvenue</h2>
-    <div class="card">Trouvez une pharmacie proche de chez vous à Kinshasa.</div>
-</div>
-
-<div id="produits" class="content">
-    <h2>Produits</h2>
-    <div class="card">💊 Médicaments</div>
-    <div class="card">✨ Beauté (Visage, Cheveux, Corps)</div>
-</div>
-
-<div id="panier" class="content">
-    <h2>Ma Commande</h2>
-    <div class="card" style="text-align:center">
-        <p>Prenez une photo de votre ordonnance</p><br>
-        <button class="btn" onclick="envoyerOrdonnance()">📸 CAPTURER ET ENVOYER</button>
+<section id="accueil" class="tab-content active">
+    <div class="card">
+        <h3>📍 Ma Commune</h3>
+        <select id="commune" class="card" style="width:100%; border:1px solid #eee; margin-top:10px;">
+            <option>Gombe</option><option>Ngaliema</option><option>Limete</option>
+        </select>
     </div>
-</div>
+    <div class="card" style="background:#e8f5e9; border-left:5px solid var(--primary);">
+        <p><b>Expertise :</b> Nos pharmaciens analysent vos ordonnances en temps réel.</p>
+    </div>
+</section>
 
-<div id="compte" class="content">
-    <h2>Mon Compte</h2>
-    <div class="card">📦 Commandes | 💬 Messages | ⚙️ Paramètres</div>
-</div>
+<section id="produits" class="tab-content">
+    <div style="display:flex; gap:10px; overflow-x:auto; margin-bottom:20px;">
+        <button class="filter-btn" onclick="filtrer('medicaments')">💊 Médicaments</button>
+        <button class="filter-btn" onclick="filtrer('visage')">🧴 Visage</button>
+        <button class="filter-btn" onclick="filtrer('cheveux')">💇‍♀️ Cheveux</button>
+    </div>
+    <div id="liste-produits" class="grid-products"></div>
+</section>
+
+<section id="panier" class="tab-content">
+    <div class="card" style="text-align:center;">
+        <div style="font-size:50px;">📸</div>
+        <h3>Scanner une ordonnance</h3>
+        <p style="font-size:13px; color:#666; margin:15px 0;">Envoyez votre photo pour validation immédiate.</p>
+        <button class="btn-main" onclick="envoyerCmd()">ENVOYER À LA PHARMACIE</button>
+    </div>
+</section>
+
+<section id="compte" class="tab-content">
+    <h2>Mon Profil</h2>
+    <div class="card">📦 Commandes</div>
+    <div class="card">💬 Messages</div>
+    <div class="card">👤 Données Personnelles</div>
+</section>
 
 <nav class="nav-bar">
     <div class="nav-item active-nav" onclick="changeTab('accueil', this)">🏠<br>Accueil</div>
@@ -57,18 +72,41 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io();
+    let catalogue = {};
+
     function changeTab(id, el) {
-        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
         document.getElementById(id).classList.add('active');
         el.classList.add('active-nav');
     }
 
-    function envoyerOrdonnance() {
-        // Simulation d'envoi vers la pharmacie ID 101
-        socket.emit('nouvelle-commande', { pharmaId: 101, clientNom: "Client Test" });
-        alert("Ordonnance envoyée !");
+    async function charger() {
+        const res = await fetch('/api/produits');
+        catalogue = await res.json();
+        filtrer('medicaments');
     }
+
+    function filtrer(cat) {
+        const container = document.getElementById('liste-produits');
+        container.innerHTML = '';
+        const list = cat === 'medicaments' ? catalogue.medicaments : catalogue.beaute[cat];
+        list.forEach(p => {
+            container.innerHTML += `
+                <div class="card">
+                    <img src="${p.image}" style="width:100%; border-radius:10px;">
+                    <h4>${p.nom}</h4>
+                    <p style="color:var(--primary); font-weight:bold;">${p.prix} FC</p>
+                </div>`;
+        });
+    }
+
+    function envoyerCmd() {
+        socket.emit('nouvelle-commande', { pharmaId: 101, clientNom: "Test User" });
+        alert("Alerte envoyée à la pharmacie !");
+    }
+
+    charger();
 </script>
 </body>
 </html>
