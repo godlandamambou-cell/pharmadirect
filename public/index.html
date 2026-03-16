@@ -3,27 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PharmaDirect - Bienvenue</title>
+    <title>PharmaDirect - Votre pharmacien à domicile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { color: #2ecc71; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #2ecc71; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        .client-link { margin-top: 20px; display: block; color: #777; text-decoration: none; font-size: 14px; }
-        .client-link b { color: #2ecc71; }
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --danger: #e74c3c;
+            --text: #2c3e50;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            min-height: 90vh;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin: 20px;
+        }
+
+        /* Section Header / Image */
+        .hero-section {
+            background: linear-gradient(rgba(46, 204, 113, 0.1), rgba(46, 204, 113, 0.1)), 
+                        url('https://images.unsplash.com/photo-1586015555751-63bb77f4322a?auto=format&fit=crop&q=80&w=500') center/cover;
+            height: 200px;
+            position: relative;
+        }
+
+        .content {
+            padding: 30px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .logo {
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .slogan {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        /* Bloc de sécurité (Votre Option 3) */
+        .security-banner {
+            background: #fff5f5;
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .security-banner b { color: var(--danger); }
+
+        /* Formulaire de connexion */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 1.5px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #f0fff4;
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-main:hover { background: var(--primary-dark); }
+
+        .footer {
+            padding: 20px;
+            font-size: 14px;
+            border-top: 1px solid #f1f1f1;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Petits badges d'expertise */
+        .badges {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .badge-item { font-size: 11px; color: #95a5a6; }
+        .badge-icon { font-size: 20px; display: block; margin-bottom: 5px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>PharmaDirect</h2>
-        <p>Connexion Partenaire & Admin</p>
+
+<div class="app-container">
+    <div class="hero-section"></div>
+    
+    <div class="content">
+        <div class="logo">PharmaDirect</div>
+        <div class="slogan">Soignez-vous chez vous, l'expertise officinale à votre porte.</div>
+        
+        <div class="security-banner">
+            <b>⚠️ Sécurité Santé :</b> Le médicament n'est pas un produit ordinaire. Votre pharmacien est à votre écoute. Faites-vous assister par un professionnel qualifié.
+        </div>
+
         <form action="/login" method="POST">
-            <input type="text" name="username" placeholder="Nom d'utilisateur" required>
-            <input type="password" name="password" placeholder="Mot de passe" required>
-            <button type="submit">Se connecter</button>
+            <div class="input-group">
+                <input type="text" name="username" placeholder="Identifiant (Email ou CNOP)" required>
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Mot de passe" required>
+            </div>
+            <button type="submit" class="btn-main">Se connecter au réseau</button>
         </form>
-        <a href="/commande-client.html" class="client-link">Vous êtes un client ? <br><b>Envoyer une ordonnance ici</b></a>
+
+        <div class="badges">
+            <div class="badge-item"><span class="badge-icon">👨‍⚕️</span>Expertise</div>
+            <div class="badge-item"><span class="badge-icon">🛡️</span>Sécurité</div>
+            <div class="badge-item"><span class="badge-icon">⚡</span>Livraison</div>
+        </div>
     </div>
+
+    <div class="footer">
+        Vous êtes un patient ? <a href="/ordonnance">Envoyer une ordonnance</a><br><br>
+        Nouvelle pharmacie ? <a href="/inscription">Inscrivez votre officine</a>
+    </div>
+</div>
+
 </body>
 </html>
