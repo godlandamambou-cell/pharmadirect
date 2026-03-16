@@ -1,18 +1,15 @@
 {
+  "name": "PharmaDirect",
   "short_name": "PharmaDirect",
-  "name": "PharmaDirect - Livraison Officine",
+  "start_url": "/client-home.html",
+  "display": "standalone",
+  "background_color": "#2ecc71",
+  "theme_color": "#2ecc71",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/822/822143.png",
-      "type": "image/png",
+      "src": "https://cdn-icons-png.flaticon.com/512/3028/3028549.png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
-  ],
-  "start_url": "/index.html",
-  "background_color": "#ffffff",
-  "display": "standalone",
-  "scope": "/",
-  "theme_color": "#2ecc71",
-  "description": "Système de gestion et de livraison d'ordonnances."
+  ]
 }
