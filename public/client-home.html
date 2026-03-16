@@ -3,128 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PharmaDirect - Mon Espace Santé</title>
+    <title>PharmaDirect - Client</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2ecc71; --bg: #f8f9fa; --text: #2c3e50; --white: #ffffff; }
+        :root { --primary: #2ecc71; --bg: #f8f9fa; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
-
-        /* Header */
-        header { background: var(--primary); color: white; padding: 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; text-align: center; }
-
-        /* Conteneur des Sections */
-        .tab-content { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+        body { background: var(--bg); padding-bottom: 70px; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; }
+        .content { padding: 20px; display: none; }
         .active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Cartes & Styles */
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .btn-action { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: 700; cursor: pointer; }
-
-        /* Navigation Basse */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; }
-        .nav-item { text-align: center; color: #bdc3c7; cursor: pointer; font-size: 12px; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        .nav-item { font-size: 12px; text-align: center; color: #999; cursor: pointer; }
         .nav-item.active-nav { color: var(--primary); font-weight: bold; }
-        .nav-icon { font-size: 24px; display: block; }
-
-        /* Catalogue Produits */
-        .grid-products { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .product-item { background: white; padding: 10px; border-radius: 15px; text-align: center; }
-        .product-img { width: 100%; border-radius: 10px; height: 100px; object-fit: cover; }
     </style>
 </head>
 <body>
 
-<header id="main-header">
-    <h1 style="font-size: 20px;">PharmaDirect</h1>
-</header>
+<header><h1>PharmaDirect</h1></header>
 
-<section id="accueil" class="tab-content active">
-    <h2>Bonjour !</h2>
-    <p style="color: #7f8c8d; margin-bottom: 20px;">Trouvez votre pharmacie à Kinshasa.</p>
-    <div class="card" style="border-left: 5px solid var(--primary);">
-        <h4>💡 Conseil du jour</h4>
-        <p style="font-size: 14px; margin-top: 5px;">Hydratez-vous bien. Votre pharmacien est là pour vous conseiller.</p>
-    </div>
-    <div class="card">
-        <h3>Ma Pharmacie Proche</h3>
-        <select id="commune-select" style="width: 100%; padding: 10px; margin-top: 10px; border-radius: 10px; border: 1px solid #eee;">
-            <option>Choisir ma commune...</option>
-            <option>Gombe</option>
-            <option>Ngaliema</option>
-            <option>Limete</option>
-        </select>
-    </div>
-</section>
+<div id="accueil" class="content active">
+    <h2>Bienvenue</h2>
+    <div class="card">Trouvez une pharmacie proche de chez vous à Kinshasa.</div>
+</div>
 
-<section id="produits" class="tab-content">
-    <h2>Catalogue</h2>
-    <div style="margin-bottom: 20px;">
-        <button class="btn-action" style="background: #3498db; margin-bottom: 10px;">🩺 Médicaments sans ordonnance</button>
-        <button class="btn-action" style="background: #9b59b6;">✨ Beauté & Cosmétiques</button>
-    </div>
-    <div class="grid-products">
-        <div class="product-item">
-            <img src="https://via.placeholder.com/100" class="product-img">
-            <p style="font-size: 12px; margin-top: 5px;">Crème Visage</p>
-        </div>
-        <div class="product-item">
-            <img src="https://via.placeholder.com/100" class="product-img">
-            <p style="font-size: 12px; margin-top: 5px;">Lotion Corps</p>
-        </div>
-    </div>
-</section>
+<div id="produits" class="content">
+    <h2>Produits</h2>
+    <div class="card">💊 Médicaments</div>
+    <div class="card">✨ Beauté (Visage, Cheveux, Corps)</div>
+</div>
 
-<section id="panier" class="tab-content">
-    <h2>Passer une commande</h2>
-    <div class="card" style="text-align: center;">
-        <div style="font-size: 50px; margin-bottom: 15px;">📸</div>
-        <h3>Scanner mon ordonnance</h3>
-        <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">Prenez une photo nette de votre prescription.</p>
-        <input type="file" accept="image/*" id="upload-ordonnance" style="display: none;">
-        <button class="btn-action" onclick="document.getElementById('upload-ordonnance').click()">Prendre la photo</button>
-        <button class="btn-action" style="margin-top: 10px; background: #2c3e50;">Envoyer à la pharmacie</button>
+<div id="panier" class="content">
+    <h2>Ma Commande</h2>
+    <div class="card" style="text-align:center">
+        <p>Prenez une photo de votre ordonnance</p><br>
+        <button class="btn" onclick="envoyerOrdonnance()">📸 CAPTURER ET ENVOYER</button>
     </div>
-</section>
+</div>
 
-<section id="compte" class="tab-content">
-    <h2>Mon Profil</h2>
-    <div class="card">
-        <div style="padding: 10px 0; border-bottom: 1px solid #eee;">📦 Mes Commandes</div>
-        <div style="padding: 10px 0; border-bottom: 1px solid #eee;">💬 Messages</div>
-        <div style="padding: 10px 0; border-bottom: 1px solid #eee;">👤 Données Personnelles</div>
-        <div style="padding: 10px 0;">⚙️ Paramètres</div>
-    </div>
-</section>
+<div id="compte" class="content">
+    <h2>Mon Compte</h2>
+    <div class="card">📦 Commandes | 💬 Messages | ⚙️ Paramètres</div>
+</div>
 
-<nav class="bottom-nav">
-    <div class="nav-item active-nav" onclick="showTab('accueil', this)">
-        <span class="nav-icon">🏠</span>Accueil
-    </div>
-    <div class="nav-item" onclick="showTab('produits', this)">
-        <span class="nav-icon">💊</span>Produits
-    </div>
-    <div class="nav-item" onclick="showTab('panier', this)">
-        <span class="nav-icon">🛒</span>Panier
-    </div>
-    <div class="nav-item" onclick="showTab('compte', this)">
-        <span class="nav-icon">👤</span>Compte
-    </div>
+<nav class="nav-bar">
+    <div class="nav-item active-nav" onclick="changeTab('accueil', this)">🏠<br>Accueil</div>
+    <div class="nav-item" onclick="changeTab('produits', this)">💊<br>Produits</div>
+    <div class="nav-item" onclick="changeTab('panier', this)">🛒<br>Panier</div>
+    <div class="nav-item" onclick="changeTab('compte', this)">👤<br>Compte</div>
 </nav>
 
+<script src="/socket.io/socket.io.js"></script>
 <script>
-    function showTab(tabId, element) {
-        // Masquer tout
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active-nav'));
-        
-        // Afficher l'onglet choisi
-        document.getElementById(tabId).classList.add('active');
-        element.classList.add('active-nav');
+    const socket = io();
+    function changeTab(id, el) {
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active-nav');
+    }
+
+    function envoyerOrdonnance() {
+        // Simulation d'envoi vers la pharmacie ID 101
+        socket.emit('nouvelle-commande', { pharmaId: 101, clientNom: "Client Test" });
+        alert("Ordonnance envoyée !");
     }
 </script>
-
 </body>
 </html>
